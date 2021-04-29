@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Client, Location } = require('./index');
+const { Client, Location, MessageMedia } = require('./index');
 
 const SESSION_FILE_PATH = './session.json';
 let sessionCfg;
@@ -7,7 +7,7 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
     sessionCfg = require(SESSION_FILE_PATH);
 }
 
-const client = new Client({ puppeteer: { headless: false }, session: sessionCfg });
+const client = new Client({ puppeteer: { headless: true, executablePath: '/usr/bin/google-chrome-stable' }, session: sessionCfg });
 // You can use an existing session and avoid scanning a QR code by adding a "session" object to the client options.
 // This object must include WABrowserId, WASecretBundle, WAToken1 and WAToken2.
 
@@ -33,8 +33,43 @@ client.on('auth_failure', msg => {
     console.error('AUTHENTICATION FAILURE', msg);
 });
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log('READY');
+
+    const pdf = MessageMedia.fromFilePath('/home/sostenes/Documents/CEBRASPE.pdf');
+    const image = MessageMedia.fromFilePath('/home/sostenes/Pictures/costas.jpeg');
+
+
+
+
+
+    
+
+    try {
+        await client.sendMessage('559988339761@c.us', pdf);
+        console.log('sent.');
+    }catch(e){
+        console.log('error to send message', e);
+    }
+
+    try {
+        await client.sendMessage('559988339761@c.us', image);
+        console.log('sent.');
+    }catch(e){
+        console.log('error to send message', e);
+    }
+
+
+    const video = MessageMedia.fromFilePath('/home/sostenes/Desktop/doge.mp4');
+    try {
+        await client.sendMessage('559988339761@c.us', video);
+        console.log('sent.');
+    }catch(e){
+        console.log('error to send message', e);
+    }
+
+    
+    
 });
 
 client.on('message', async msg => {
